@@ -48,7 +48,7 @@ static void on_keyboard(unsigned char key, int x, int y)
         break;
 	}
 
-	//FIXME glutPostRedisplay(); ubaci kada bude imalo iscrtavanja
+	/* FIXME glutPostRedisplay(); ubaci kada bude imalo iscrtavanja */
 }
 
 static void on_display(void)
