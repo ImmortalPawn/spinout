@@ -1,9 +1,5 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <GL/glut.h>
-
-/* Funkcija initalize() vrsi OpenGL inicijalizaciju. */
-static void initialize(void);
+#include "global.h"
+#include "initialize.h"
 
 /* Deklaracije callback funkcija. */
 static void on_keyboard(unsigned char key, int x, int y);
@@ -11,39 +7,33 @@ static void on_display(void);
 
 int main(int argc, char **argv)
 {
-    /* Inicijalizuje se GLUT. */
+    /* GLUT init. */
     glutInit(&argc, argv);
     glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE);
 
-    /* Kreira se prozor. */
+    /* Create window. */
     glutInitWindowSize(500, 500);
     glutInitWindowPosition(100, 100);
     glutCreateWindow("spinout");
 
-    /* Registruju se funkcije za obradu dogadjaja. */
+    /* Listening for callback funkctions. */
     glutKeyboardFunc(on_keyboard);
     glutDisplayFunc(on_display);
 
-    /* Obavlja se OpenGL inicijalizacija. */
+    /* Init window configuration. */
     initialize();
 
-    /* Ulazi se u glavnu petlju. */
+	/* Enter main loop. */
     glutMainLoop();
 
     return 0;
-}
-
-static void initialize(void)
-{
-    /* Postavlja se boja pozadine. */
-    glClearColor(0, 0, 0, 0);
 }
 
 static void on_keyboard(unsigned char key, int x, int y)
 {
     switch (key) {
     case 27:
-        /* ESC dugme - Zavrsava se program. */
+        /* ESC button - exiting game. */
         exit(0);
         break;
 	}
@@ -53,9 +43,9 @@ static void on_keyboard(unsigned char key, int x, int y)
 
 static void on_display(void)
 {
-    /* Brise se prethodni sadrzaj prozora. */
+    /* Clear previous buffer color. */
     glClear(GL_COLOR_BUFFER_BIT);
 
-    /* Nova slika se salje na ekran. */
+    /* Send new picutre to window. */
     glutSwapBuffers();
 }
