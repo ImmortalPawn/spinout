@@ -1,12 +1,16 @@
-PROGRAM = spinout.out 
+OUTPUT = spinout.out
 CC      = gcc
 CFLAGS  = -g -ansi -Wall -I/usr/X11R6/include -I/usr/pkg/include
 LDFLAGS = -L/usr/X11R6/lib -L/usr/pkg/lib
 LDLIBS  = -lglut -lGLU -lGL -lm
 DEPS := $(wildcard src/*.h)
+OBJ := $(patsubst %.c, %.o,$(wildcard src/*.c))
 
-$(PROGRAM): $(DEPS)
-	$(CC) $(CFLAGS) $(LDFLAGS) -o $(PROGRAM) src/*.c $(LDLIBS)
+%.o: %.c $(DEPS)
+	$(CC) -c $(CFLAGS) -o $@ $<
+
+$(OUTPUT): $(OBJ)
+	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $^ $(LDLIBS) 
 
 .PHONY: beauty clean dist
 
@@ -15,7 +19,7 @@ beauty:
 	-rm *~ *BAK
 
 clean:
-	-rm *.o $(PROGRAM) *core
+	-rm *.o $(OUTPUT) *core
 
 dist: clean
-	-tar -chvj -C .. -f ../$(PROGRAM).tar.bz2 $(PROGRAM)
+	-tar -chvj -C .. -f ../$(OUTPUT).tar.bz2 $(OUTPUT)
