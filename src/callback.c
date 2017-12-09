@@ -1,4 +1,3 @@
-#include "global.h"
 #include "callback.h"
 
 void on_keyboard(unsigned char key, int x, int y)
@@ -16,7 +15,7 @@ void on_keyboard(unsigned char key, int x, int y)
 void on_display(void)
 {
     /* Clear previous buffer color. */
-    glClear(GL_COLOR_BUFFER_BIT);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     /* Send new picutre to window. */
     glutSwapBuffers();

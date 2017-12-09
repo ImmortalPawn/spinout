@@ -1,5 +1,5 @@
 #include "global.h"
-#include "initialize.h"
+#include "init.h"
 #include "callback.h"
 
 int main(int argc, char **argv)
@@ -18,7 +18,7 @@ int main(int argc, char **argv)
     glutDisplayFunc(on_display);
 
     /* Init window configuration. */
-    initialize();
+    init_GL();
 
 	/* Enter main loop. */
     glutMainLoop();
