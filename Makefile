@@ -19,7 +19,7 @@ beauty:
 	-rm *~ *BAK
 
 clean:
-	-rm *.o $(OUTPUT) *core
+	-rm src/*.o $(OUTPUT) 
 
 dist: clean
 	-tar -chvj -C .. -f ../$(OUTPUT).tar.bz2 $(OUTPUT)
