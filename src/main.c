@@ -5,17 +5,15 @@
 int main(int argc, char **argv)
 {
     /* GLUT init. */
-    glutInit(&argc, argv);
-    glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE);
+	init_GLUT(&argc, argv);
 
     /* Create window. */
-    glutInitWindowSize(500, 500);
-    glutInitWindowPosition(100, 100);
-    glutCreateWindow("spinout");
+	init_window();
 
-    /* Listening for callback funkctions. */
+    /* Listening for callback functions. */
     glutKeyboardFunc(on_keyboard);
     glutDisplayFunc(on_display);
+	glutReshapeFunc(on_reshape);
 
     /* Init window configuration. */
     init_GL();
@@ -25,5 +23,3 @@ int main(int argc, char **argv)
 
     return 0;
 }
-
-
