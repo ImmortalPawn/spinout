@@ -5,4 +5,7 @@
 #include <stdlib.h>
 #include <GL/glut.h>
 
+extern int window_width;
+extern int window_height;
+
 #endif
