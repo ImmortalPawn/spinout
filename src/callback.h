@@ -2,6 +2,7 @@
 #define _CALLBACK_H 
 
 #include "global.h"
+#include "init.h"
 #include "drawShapes.h"
 
 void on_keyboard(unsigned char key, int x, int y);

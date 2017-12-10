@@ -1,6 +1,6 @@
 #include "global.h"
-#include "init.h"
 #include "callback.h"
+#include "init.h"
 
 int main(int argc, char **argv)
 {

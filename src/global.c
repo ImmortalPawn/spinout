@@ -1,5 +1,5 @@
 #include "global.h"
 
-int window_width;
-int window_height;
+int window_width = 0;
+int window_height = 0;
 
