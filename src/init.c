@@ -27,21 +27,22 @@ void init_GL(void)
 
 void init_projection(void)
 {
+	glViewport(0, 0, window_width, window_height);
+	
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 	gluPerspective(
-			60, window_width/(float)window_height,
+			60,
+			window_width/(float)window_height,
 			1, 5);
 }
 
 void init_pov(void)
 {
-	glViewport(0, 0, window_width, window_height);
-
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 	gluLookAt(
-			1, 2, 3,
+			3, 0, 0,
 			0, 0, 0,
 			0, 1, 0);
 }
