@@ -7,6 +7,14 @@ void on_keyboard(unsigned char key, int x, int y)
 			/* ESC button - exit game. */
 			exit(0);
 			break;
+		case 'a':
+			glutTimerFunc(50, on_timer, 0);
+			car_rot += 15;
+			break;
+		case 'd':
+			glutTimerFunc(50, on_timer, 0);
+			car_rot -= 15;
+			break;
 	}
 }
 
@@ -32,4 +40,14 @@ void on_reshape(int width, int height)
 
 	/* Initialize projection. */
 	init_projection();
+}
+
+void on_timer(int value)
+{
+	/* Force window drawing. */
+	glutPostRedisplay();
+
+	if (is_active_left_right_timer) {
+		glutTimerFunc(50, on_timer, left_right_timer);
+	}
 }

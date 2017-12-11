@@ -3,8 +3,8 @@
 void draw_car(void)
 {
 	glPushMatrix();
+		glRotatef(car_rot, 1, 0, 0);
 		glColor3f(1, 0, 0);
-		glScalef(1, 1, 2);
-		glutWireCube(0.2);
+		glutSolidCube(0.2);
 	glPopMatrix();
 }
