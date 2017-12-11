@@ -1,7 +1,6 @@
 #include "init.h"
 
-
-void init_GLUT(int *argc, char** argv)
+void init_GLUT(int* argc, char** argv)
 {
 	glutInit(argc, argv);
 	glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE | GLUT_DEPTH);
@@ -19,6 +18,9 @@ void init_GL(void)
 	/* Background color. */
 	glClearColor(.75, .75, .75, 0);
 
+	/* Set line width. */
+	glLineWidth(2);
+
 	/* Depth buffer. */
 	glEnable(GL_DEPTH_TEST);
 }
@@ -28,13 +30,14 @@ void init_projection(void)
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 	gluPerspective(
-			60,
-			window_width/(float)window_height,
+			60, window_width/(float)window_height,
 			1, 5);
 }
 
 void init_pov(void)
 {
+	glViewport(0, 0, window_width, window_height);
+
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 	gluLookAt(

@@ -4,32 +4,32 @@ void on_keyboard(unsigned char key, int x, int y)
 {
     switch (key) {
 		case 27:
-			/* ESC button - exiting game. */
+			/* ESC button - exit game. */
 			exit(0);
 			break;
 	}
-
-	/* FIXME glutPostRedisplay(); ubaci kada bude imalo iscrtavanja */
 }
 
 void on_display(void)
 {
-    /* Clear previous buffer color. */
+    /* Clear previous buffer content. */
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+	/* Initialize point of view. */
 	init_pov();
 	
 	draw_car();
 	
-    /* Send new picutre to window. */
+    /* Send new content to window. */
     glutSwapBuffers();
 }
 
 void on_reshape(int width, int height)
 {
-	/* Adjusting window width & height. */
+	/* Adjust window width & height. */
 	window_width = width;
 	window_height = height;
 
+	/* Initialize projection. */
 	init_projection();
 }

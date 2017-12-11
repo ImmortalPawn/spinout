@@ -4,10 +4,10 @@
 
 int main(int argc, char **argv)
 {
-    /* GLUT init. */
+    /* Initialize GLUT. */
 	init_GLUT(&argc, argv);
 
-    /* Create window. */
+    /* Create & initialize window. */
 	init_window();
 
     /* Listening for callback functions. */
@@ -15,7 +15,7 @@ int main(int argc, char **argv)
     glutDisplayFunc(on_display);
 	glutReshapeFunc(on_reshape);
 
-    /* Init window configuration. */
+    /* Initialize OpenGL configuration. */
     init_GL();
 
 	/* Enter main loop. */
