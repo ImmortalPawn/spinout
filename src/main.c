@@ -14,6 +14,7 @@ int main(int argc, char **argv)
     glutKeyboardFunc(on_keyboard);
     glutDisplayFunc(on_display);
 	glutReshapeFunc(on_reshape);
+	glutTimerFunc(50, on_timer, timer_game_begin);
 
     /* Initialize OpenGL configuration. */
     init_GL();
