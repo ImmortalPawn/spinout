@@ -10,8 +10,11 @@ int main(int argc, char **argv)
     /* Create & initialize window. */
 	init_window();
 
+	glutIgnoreKeyRepeat(0);
+
     /* Listening for callback functions. */
-    glutKeyboardFunc(on_keyboard);
+    glutKeyboardFunc(on_keyboard_press);
+	glutKeyboardUpFunc(on_keyboard_relase);
     glutDisplayFunc(on_display);
 	glutReshapeFunc(on_reshape);
 	glutTimerFunc(50, on_timer, timer_game_begin);

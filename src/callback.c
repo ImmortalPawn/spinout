@@ -1,6 +1,6 @@
 #include "callback.h"
 
-void on_keyboard(unsigned char key, int x, int y)
+void on_keyboard_press(unsigned char key, int x, int y)
 {
     switch (key) {
 		case 27:
@@ -8,55 +8,83 @@ void on_keyboard(unsigned char key, int x, int y)
 			exit(0);
 			break;
 		case 'a':
-			car_rot += 15;
+			key_state['a'] = 1;
 			break;
 		case 'd':
-			car_rot -= 15;
+			key_state['d'] = 1;
 			break;
 		case 'w':
-			if (car_speed + 1 > 100) {
-				car_speed = 100;
-			}
-			else {
-				car_speed += 1;
-			}
-#if PRINT_CAR_SPEED
-			print_car_speed();
-#endif
+			key_state['w'] = 1;
 			break;
 		case 's':
-			if (car_speed - 1 < -50) {
-				car_speed = -50;
-			}
-			else {
-				car_speed -= 1;
-			}
-#if PRINT_CAR_SPEED
-			print_car_speed();
-#endif
+			key_state['s'] = 1;
 			break;
 		case 32:
-			/* SPACE button - handbrake. */
-			if (car_speed > 0) {
-				if (car_speed - 20 < 0) {
-					car_speed = 0;
-				}
-				else {
-					car_speed -= 20;
-				}
+			key_state[32] = 1;
+			break;
+	}
+
+	on_keyboard();
+}
+
+void on_keyboard_relase(unsigned char key, int x, int y)
+{
+	key_state[key] = 0;
+}
+
+void on_keyboard(void) 
+{
+	float car_rot_angle = car_speed / 15.0;
+
+	if (key_state['w']) {
+
+		if (car_speed + car_accel > 100) {
+			car_speed = 100;
+		}
+		else {
+			car_speed += car_accel;
+		}
+	}
+
+	if (key_state['s']) {
+		if (car_speed - car_decel < -50) {
+			car_speed = -50;
+		}
+		else {
+			car_speed -= car_decel;
+		}
+	}
+
+	if (key_state['a']) {
+		if (car_speed != 0) {
+			car_rot += car_rot_angle;
+		}
+	}
+	
+	if (key_state['d']) {
+		if (car_speed != 0) {
+			car_rot -= car_rot_angle;
+		}
+	}
+
+	if (key_state[32]) {
+		/* SPACE button - handbrake. */
+		if (car_speed > 0) {
+			if (car_speed - car_handbrake_decel < 0) {
+				car_speed = 0;
 			}
 			else {
-				if (car_speed + 20 > 0) {
-					car_speed = 0;
-				}
-				else {
-					car_speed += 20;
-				}
+				car_speed -= car_handbrake_decel;
 			}
-#if PRINT_CAR_SPEED
-			print_car_speed();
-#endif
-			break;
+		}
+		else {
+			if (car_speed + car_handbrake_decel > 0) {
+				car_speed = 0;
+			}
+			else {
+				car_speed += car_handbrake_decel;
+			}
+		}
 	}
 }
 

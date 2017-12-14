@@ -9,7 +9,7 @@ void init_GLUT(int* argc, char** argv)
 void init_window(void)
 {
 	glutInitWindowSize(800, 600);
-	glutInitWindowPosition(100, 100);
+	glutInitWindowPosition(50, 50);
 	glutCreateWindow("spinout");
 }
 
