@@ -1,24 +1,44 @@
+#include <stdio.h>
 #include <stdlib.h>
 #include <GL/glut.h>
 
 #define ESC (27)
-/* #define DEBUG (1) */
+// #define DEBUG (1)
+
+typedef struct _Line {
+    GLfloat y;
+} Line;
 
 /* START of GLOBAL variables. */
-GLdouble carSize;
-GLdouble carWidth;
-GLdouble carHeight;
+GLfloat carSize;
 GLfloat carScaleX;
+GLfloat carWidth;
+GLfloat carHeight;
+
+Line* lines;
+int linesNum;
+GLfloat lineScaleX;
+GLfloat lineWidth;
+GLfloat lineHeight;
+GLfloat linesSeparation;
+GLfloat linesLX;
+GLfloat linesRX;
+
+GLfloat speed;
+GLfloat score;
 /* END of GLOBAL variables.  */
 
-/* Functions declaration. */
-static void initGlobalVars(void);
-static void onKeyboard(unsigned char key, int x, int y);
-static void onReshape(int width, int height);
-static void onDisplay(void);
-static void initOpenGl(void);
+/* Functions declarations. */
+void assert(int expr, char* msg);
+void initGlobalVars(void);
+void onKeyboard(unsigned char key, int x, int y);
+void onReshape(int width, int height);
+void onDisplay(void);
+void initOpenGl(void);
 void drawAxis(void);
 void drawEdges(void);
+void drawLines(void);
+void deInitVars(void);
 
 int main(int argc, char** argv)
 {
@@ -45,18 +65,61 @@ int main(int argc, char** argv)
     /* Main loop. */
     glutMainLoop();
 
+    deInitVars();
+
     exit(EXIT_SUCCESS);
 }
 
-static void initGlobalVars(void)
+void assert(int expr, char* msg)
 {
-    carSize = 0.30d;
-    carScaleX = 0.70f;
-    carWidth = carSize / (GLdouble)carScaleX;
-    carHeight = carSize;
+    if (!expr) {
+        perror(msg);
+        fprintf(stderr, "File: %s\nFunc: %s\nLine: %d\n", __FILE__, __func__, __LINE__);
+        exit(EXIT_FAILURE);
+    }    
 }
 
-static void onKeyboard(unsigned char key, int x, int y)
+void initGlobalVars(void)
+{
+    carSize = 0.30f;
+    carScaleX = 0.70f;
+    carWidth = carSize * carScaleX;
+    carHeight = carSize;
+
+    #ifdef DEBUG
+        printf("carSize = %.2f, carWidth = %.2f, carHeight = %.2f\n", carSize, carWidth, carHeight);
+    #endif
+
+    linesNum = 8;
+    lineScaleX = 0.30f;
+    lineHeight = carHeight / 2;
+    lineWidth = lineHeight * lineScaleX;
+    linesLX = -0.25f;
+    linesRX = 0.25f;
+
+    #ifdef DEBUG
+        printf("lineHeight = %.2f, lineWidth = %.2f, linesLX = %.2f, linesRX = %.2f\n", lineHeight, lineWidth, linesLX, linesRX);
+    #endif
+
+    lines = (Line*)malloc(linesNum * sizeof(Line));
+    assert(NULL != lines, "malloc()");
+
+    linesSeparation = 0.00d;
+    for (int i = 0; i < linesNum; i++) {
+        lines[i].y = 1.00f - linesSeparation;
+        linesSeparation += 2 * lineHeight; 
+    }
+
+    #ifdef DEBUG
+        printf("Road lines Y coordinates = ");
+        for (int i = 0; i < linesNum; i++) {
+            printf("%.2lf ", lines[i].y);
+        }
+        putchar('\n');
+    #endif
+}
+
+ void onKeyboard(unsigned char key, int x, int y)
 {
     switch (key) {
         case ESC:
@@ -65,7 +128,7 @@ static void onKeyboard(unsigned char key, int x, int y)
     }
 }
 
-static void onReshape(int width, int height)
+ void onReshape(int width, int height)
 {
     /* Set viewport. */
     glViewport(0, 0, width, height);
@@ -77,11 +140,11 @@ static void onReshape(int width, int height)
     (
         -0.75d, 0.75d,
         -1.00d, 1.00d,
-        1.00d, 0.00d
+        1.00d, -1.00d
     );
 }
 
-static void onDisplay(void)
+ void onDisplay(void)
 {
     /* Clear buffers. */
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -104,22 +167,26 @@ static void onDisplay(void)
         drawEdges();
     #endif
 
-    /*
-    glColor3f(0.00f, 0.00f, 0.00f);
+    /* Draw road lines. */
+    drawLines();
+
+    glColor3f(1.00f, 1.00f, 1.00f);
     glPushMatrix();
         glTranslatef(0.00f, -0.70f, 0.00f);
         glScalef(carScaleX, 1.00f, 1.00f);
-        glutWireCube(carSize);
+        glutWireCube((GLdouble)carSize);
     glPopMatrix();
-    */
 
     /* Swap buffers. */
     glutSwapBuffers();
 }
 
-static void initOpenGl(void)
+void initOpenGl(void)
 {
-    glClearColor(0.75f, 0.75f, 0.75f, 0.00f);
+    /* Define clear color. */
+    glClearColor(0.00f, 0.00f, 0.00f, 0.00f);
+
+    /* Enable Z buffer. */
     glEnable(GL_DEPTH_TEST);
 }
 
@@ -171,9 +238,44 @@ void drawEdges()
             glVertex3f(-0.75f, 1.00f, 0.00f);
             glVertex3f(0.75f, 1.00f, 0.00f);
 
+            /* Left line. */
+            glVertex3f(-0.25f, -1.00f, 0.00f);
+            glVertex3f(-0.25f, 1.00f, 0.00f);
+
+            /* Right line. */
+            glVertex3f(0.25f, -1.00f, 0.00f);
+            glVertex3f(0.25f, 1.00f, 0.00f);
+
         glEnd();
 
         glLineWidth(1);
 
     glPopMatrix();
+}
+
+void drawLines(void)
+{
+    glColor3f(1.00f, 1.00f, 1.00f);
+
+    for (int i = 0; i < linesNum; i++) {
+
+        /* Draw left lines. */
+        glPushMatrix();
+            glTranslatef(linesLX, lines[i].y, 0.00f);
+            glScalef(lineScaleX, 1.00f, 0.00f);
+            glutSolidCube(lineHeight);
+        glPopMatrix();
+
+        /* Draw right lines. */
+        glPushMatrix();
+            glTranslatef(linesRX, lines[i].y, 0.00f);
+            glScalef(lineScaleX, 1.00f, 0.00f);
+            glutSolidCube(lineHeight);
+        glPopMatrix();
+    }
+}
+
+void deInitVars(void)
+{
+    free(lines);
 }
