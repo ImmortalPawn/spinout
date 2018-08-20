@@ -6,11 +6,11 @@
 /* Draw debug information. */
 // #define DEBUG_VISUAL (1)
 /* Print debug information. */
-// #define DEBUG_CONSOLE (2)
+#define DEBUG_CONSOLE (2)
 #define ENTER (13)
 #define ESC (27)
 #define GAME_TIMER_ID (1)
-#define GAME_TIMER_INTERVAL (20)
+#define GAME_TIMER_INTERVAL (17)
 
 typedef struct _Line {
     GLfloat y;
@@ -25,6 +25,7 @@ typedef struct _Car {
 GLfloat carLength;
 GLfloat carWidth;
 GLfloat carScaleX;
+GLfloat carWheelSize;
 
 int carsNum;
 Car* cars;
@@ -121,11 +122,12 @@ void assert(int expr, char* msg)
 
 void initGlobalVars(int argc, char** argv)
 {
-    carsNum = 3;
+    carsNum = 10;
 
     carScaleX = 0.70f;
-    carLength = 0.30f;
+    carLength = 0.20f;
     carWidth = carLength * carScaleX;
+    carWheelSize = 0.03;
 
     cars = (Car*)malloc(carsNum * sizeof(Car));
     assert(NULL != cars, "malloc()");
@@ -163,7 +165,7 @@ void initGlobalVars(int argc, char** argv)
         printf("carLength = %.2f, carWidth = %.2f, carsNum = %d\n", carLength, carWidth, carsNum);
     #endif
 
-    linesNum = 8;
+    linesNum = 11;
     lineScaleX = 0.30f;
     lineLength = carLength / 2;
     lineWidth = lineLength * lineScaleX;
@@ -247,7 +249,7 @@ void onReshape(int width, int height)
     glOrtho
     (
         -0.75d, 0.75d,
-        -1.00d, 1.00d,
+        -1.00d, 0.90d,
         -2.00d, 2.00d
     );
 }
@@ -325,7 +327,7 @@ void onTimer(int timerId)
 
             if ((lines[i].y + lineLength/2) <= -1.00f) {
 
-                lines[i].y = 1.00f;
+                lines[i].y = 1.00f - lineLength/3;
             }
         }
 
@@ -531,23 +533,144 @@ void deInitVars(void)
 
 void drawCars(void)
 {
-
     /* Bot cars. */
     for (int i = 0; i < carsNum; i++) {
 
+        /* Body. */ 
         glColor3f(1.00f, 0.00f, 0.00f); 
         glPushMatrix(); 
-            glTranslatef(cars[i].x, cars[i].y, 0.00f);
+            glTranslatef(cars[i].x, cars[i].y, 0.01f);
             glScalef(carScaleX, 1.00f, 1.00f);
             glutSolidCube((GLdouble)carLength);
+        glPopMatrix();
+
+        /* Cockpit. */
+        glColor3f(0.40f, 0.00f, 0.00f); 
+        glPushMatrix(); 
+            glTranslatef(cars[i].x, cars[i].y+carLength/9, 0.02f);
+            glScalef(0.50f, 0.50f, 1.00f);
+            glutSolidCube((GLdouble)carLength);
+        glPopMatrix();
+
+        /* Head. */
+        glColor3f(0.44f, 0.43f, 0.23f); 
+        glPushMatrix(); 
+            glTranslatef(cars[i].x, cars[i].y+carLength/9, 0.03f);
+            glScalef(0.50f, 0.50f, 1.00f);
+            glutSolidSphere(0.10d, 50, 50);
+        glPopMatrix();
+
+        /* Front trap. */
+        glColor3f(0.00f, 0.00f, 0.00f); 
+        glPushMatrix(); 
+            glTranslatef(cars[i].x, cars[i].y+carLength/3, 0.01f);
+            glScalef(1.00f, 0.05f, 1.00f);
+            glutSolidCube((GLdouble)carLength);
+        glPopMatrix();
+        
+        /* Back trap. */
+        glPushMatrix(); 
+            glTranslatef(cars[i].x, cars[i].y-carLength/3, 0.01f);
+            glScalef(1.00f, 0.05f, 1.00f);
+            glutSolidCube((GLdouble)carLength);
+        glPopMatrix();
+
+        /* Wheels. */
+        /* Top left. */
+        glPushMatrix(); 
+            glTranslatef(cars[i].x-carWidth/2-carWheelSize, cars[i].y+carLength/3, 0.02f);
+            glScalef(0.70f, 0.80f, 1.00f);
+            glutSolidSphere((GLdouble)carWheelSize, 50, 50);
+        glPopMatrix();
+
+        /* Top right. */
+        glPushMatrix(); 
+            glTranslatef(cars[i].x+carWidth/2+carWheelSize, cars[i].y+carLength/3, 0.02f);
+            glScalef(0.70f, 0.80f, 1.00f);
+            glutSolidSphere((GLdouble)carWheelSize, 50, 50);
+        glPopMatrix();
+
+        /* Bottom left. */
+        glPushMatrix(); 
+            glTranslatef(cars[i].x-carWidth/2-carWheelSize, cars[i].y-carLength/3, 0.02f);
+            glScalef(0.70f, 0.80f, 1.00f);
+            glutSolidSphere((GLdouble)carWheelSize, 50, 50);
+        glPopMatrix();
+
+        /* Bottom right. */
+        glPushMatrix(); 
+            glTranslatef(cars[i].x+carWidth/2+carWheelSize, cars[i].y-carLength/3, 0.02f);
+            glScalef(0.70f, 0.80f, 1.00f);
+            glutSolidSphere((GLdouble)carWheelSize, 50, 50);
         glPopMatrix();
     }
 
     /* Player car. */
+    /* Body. */ 
     glColor3f(0.00f, 0.00f, 1.00f); 
     glPushMatrix(); 
-        glTranslatef(playerCarX, playerCarY, 0.00f);
+        glTranslatef(playerCarX, playerCarY, 0.01f);
         glScalef(carScaleX, 1.00f, 1.00f);
         glutSolidCube((GLdouble)carLength);
+    glPopMatrix();
+
+    /* Cockpit. */
+    glColor3f(0.00f, 0.00f, 0.40f); 
+    glPushMatrix(); 
+        glTranslatef(playerCarX, playerCarY-carLength/9, 0.02f);
+        glScalef(0.50f, 0.50f, 1.00f);
+        glutSolidCube((GLdouble)carLength);
+    glPopMatrix();
+
+    /* Head. */
+    glColor3f(0.20f, 0.00f, 0.00f); 
+    glPushMatrix(); 
+        glTranslatef(playerCarX, playerCarY-carLength/9, 0.03f);
+        glScalef(0.50f, 0.50f, 1.00f);
+        glutSolidSphere(0.10d, 50, 50);
+    glPopMatrix();
+
+    /* Front trap. */
+    glColor3f(0.00f, 0.00f, 0.00f); 
+    glPushMatrix(); 
+        glTranslatef(playerCarX, playerCarY+carLength/3, 0.01f);
+        glScalef(1.00f, 0.05f, 1.00f);
+        glutSolidCube((GLdouble)carLength);
+    glPopMatrix();
+    
+    /* Back trap. */
+    glPushMatrix(); 
+        glTranslatef(playerCarX, playerCarY-carLength/3, 0.01f);
+        glScalef(1.00f, 0.05f, 1.00f);
+        glutSolidCube((GLdouble)carLength);
+    glPopMatrix();
+
+    /* Wheels. */
+    /* Top left. */
+    glPushMatrix(); 
+        glTranslatef(playerCarX-carWidth/2-carWheelSize, playerCarY+carLength/3, 0.02f);
+        glScalef(0.70f, 0.80f, 1.00f);
+        glutSolidSphere((GLdouble)carWheelSize, 50, 50);
+    glPopMatrix();
+
+    /* Top right. */
+    glPushMatrix(); 
+        glTranslatef(playerCarX+carWidth/2+carWheelSize, playerCarY+carLength/3, 0.02f);
+        glScalef(0.70f, 0.80f, 1.00f);
+        glutSolidSphere((GLdouble)carWheelSize, 50, 50);
+    glPopMatrix();
+
+    /* Bottom left. */
+    glPushMatrix(); 
+        glTranslatef(playerCarX-carWidth/2-carWheelSize, playerCarY-carLength/3, 0.02f);
+        glScalef(0.70f, 0.80f, 1.00f);
+        glutSolidSphere((GLdouble)carWheelSize, 50, 50);
+    glPopMatrix();
+
+    /* Bottom right. */
+    glPushMatrix(); 
+        glTranslatef(playerCarX+carWidth/2+carWheelSize, playerCarY-carLength/3, 0.02f);
+        glScalef(0.70f, 0.80f, 1.00f);
+        glutSolidSphere((GLdouble)carWheelSize, 50, 50);
     glPopMatrix();
 }
