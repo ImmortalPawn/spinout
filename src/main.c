@@ -6,7 +6,7 @@
 /* Draw debug information. */
 // #define DEBUG_VISUAL (1)
 /* Print debug information. */
-#define DEBUG_CONSOLE (2)
+// #define DEBUG_CONSOLE (2)
 #define ENTER (13)
 #define ESC (27)
 #define GAME_TIMER_ID (1)
@@ -29,7 +29,6 @@ GLfloat carWheelSize;
 
 int carsNum;
 Car* cars;
-GLfloat carsSeparation;
 GLfloat carsSpawnY;
 
 GLfloat playerCarX;
@@ -42,11 +41,14 @@ GLfloat lineScaleX;
 int linesNum;
 Line* lines;
 
-GLfloat linesSeparation;
 GLfloat linesLX;
 GLfloat linesRX;
 
 int gameAnimation;
+
+int levelsNum;
+int* levels;
+GLfloat finalScore;
 GLfloat speed;
 GLfloat score;
 /* END of GLOBAL variables.  */
@@ -57,7 +59,7 @@ GLfloat score;
 void assert(int expr, char* msg);
 /* Initialize global variables. */
 void initGlobalVars(int argc, char** argv);
-/* Free/Remove .. variables. */
+/* Deinitialize variables. */
 void deInitVars(void);
 /*Initialize OpenGl*/
 void initOpenGL(void);
@@ -75,7 +77,8 @@ void onTimer(int timerId);
 void drawAxis(void);
 void drawEdges(void);
 void drawRoadLines(void);
-void drawCars(void);
+void drawBotCars(void);
+void drawPlayer(void);
 void drawRoad(void);
 /* END of functions declarations. */
 
@@ -104,9 +107,6 @@ int main(int argc, char** argv)
     /* Main loop. */
     glutMainLoop();
 
-    /* Deinitialize global variables. */
-    deInitVars();
-
     exit(EXIT_SUCCESS);
 }
 
@@ -119,9 +119,36 @@ void assert(int expr, char* msg)
     }    
 }
 
-
 void initGlobalVars(int argc, char** argv)
 {
+    /* E - easy, M - medium, H - hard, I - insane. */
+    GLfloat difficulty;
+    if (argc == 2) {
+        switch (argv[1][0]) {
+            case 'e':
+            case 'E':
+                difficulty = 5.00f;
+                break;
+            case 'm':
+            case 'M':
+                difficulty = 4.00f;
+                break;
+            case 'h':
+            case 'H':
+                difficulty = 3.00f;
+                break;
+            case 'i':
+            case 'I':
+                difficulty = 2.50f;
+                break;
+            default:
+                difficulty = 5.00f;
+        }
+    }
+    else {
+        difficulty = 5.00f;
+    }
+
     carsNum = 10;
 
     carScaleX = 0.70f;
@@ -133,7 +160,7 @@ void initGlobalVars(int argc, char** argv)
     assert(NULL != cars, "malloc()");
 
     /* Create spawn points for bot cars. */
-    carsSeparation = 0.00f;
+    GLfloat carsSeparation = 0.00f;
     GLfloat carX = 0.00f;
     int carRandomX = 0;
     for (int i = 0; i < carsNum; i++) {
@@ -153,7 +180,7 @@ void initGlobalVars(int argc, char** argv)
 
         cars[i].x = carX;
         cars[i].y = 1.00f + carsSeparation;
-        carsSeparation += 2.5 * carLength; 
+        carsSeparation += difficulty * carLength; 
     }
 
     carsSpawnY = carsSeparation - 1.00f;
@@ -165,7 +192,7 @@ void initGlobalVars(int argc, char** argv)
         printf("carLength = %.2f, carWidth = %.2f, carsNum = %d\n", carLength, carWidth, carsNum);
     #endif
 
-    linesNum = 11;
+    linesNum = 10;
     lineScaleX = 0.30f;
     lineLength = carLength / 2;
     lineWidth = lineLength * lineScaleX;
@@ -180,15 +207,20 @@ void initGlobalVars(int argc, char** argv)
     assert(NULL != lines, "malloc()");
 
     /* Create spawn points for road lines. */
-    linesSeparation = 0.00f;
+    GLfloat linesSeparation = 0.00f;
     for (int i = 0; i < linesNum; i++) {
-        lines[i].y = 1.00f - linesSeparation;
+        lines[i].y = 1.00f + lineLength/2 - linesSeparation;
         linesSeparation += 2 * lineLength; 
     }
+
+    levelsNum = 10;
+    levels = (int*)calloc(levelsNum, sizeof(int));
+    assert(NULL != levels, "malloc()");
 
     gameAnimation = 0;
     speed = carLength / (GLfloat) GAME_TIMER_INTERVAL / 2;
     score = 0.00f;
+    finalScore = 0.00f;
 }
 
 void onKeyboard(unsigned char key, int x, int y)
@@ -197,6 +229,10 @@ void onKeyboard(unsigned char key, int x, int y)
 
         /* Close game. */
         case ESC:
+
+            /* Deinitialize global variables. */
+            deInitVars();
+
             exit(EXIT_SUCCESS);
             break;
 
@@ -294,8 +330,11 @@ void onDisplay(void)
     /* Draw road lines. */
     drawRoadLines();
 
-    /* Draw cars. */
-    drawCars();
+    /* Draw bot cars. */
+    drawBotCars();
+
+    /* Draw player car. */
+    drawPlayer();
 
     /* Swap buffers. */
     glutSwapBuffers();
@@ -305,14 +344,55 @@ void onTimer(int timerId)
 {
     if (timerId == GAME_TIMER_ID) {
 
+        /* Score is based on speed and level. */
+        GLfloat levelBase = 5.00f;
+        for (int i = 0; i < levelsNum; i++) {
+
+            GLfloat sumLess = 0.00f;
+            GLfloat sumMore = 0.00f;
+
+            for (int j = 0; j <= i; j++) {
+                sumMore += levelBase * (j+1);
+            }
+
+            for (int j = 0; j < i; j++) {
+                sumLess += levelBase * (j+1);
+            }
+
+            if (score > sumLess && score <= sumMore) {
+                
+                if (levels[i] != 1) {
+
+                    GLfloat div;
+                    
+                    if (i == 0 || i == 1) {
+
+                        div = 1.00f;
+                    }
+                    else {
+
+                        div = (GLfloat)i;
+                    }
+
+                    speed *= (GLfloat)(i+1) / div;
+                    levels[i] = 1;
+                }
+            }
+        }
+
+        long int scoreBefore = (long int)score;
+        score += speed;
+
+        /* Print score only if long int value is different then previous one. (to reduce console spam). */
+        if (scoreBefore != (long int)score) {
+
+            printf("Score: %ld\n", (long int)score);
+        }
+
         /* Animate road lines. */
         for (int i = 0; i < linesNum; i++) {
             lines[i].y -= speed;
         }
-
-        /* Score is based on speed. */
-        score += speed;
-        printf("Score: %.2lf\n", score);
 
         /* Animate cars. */
         for (int i = 0; i < carsNum; i++) {
@@ -370,6 +450,7 @@ void onTimer(int timerId)
 
                             printf("GAMEOVER: playerCarY = %.2f, colisionCarY = %.2f\n", playerCarY, cars[i].y);
                             gameAnimation = 0;
+                            /* onKeyboard(ESC, 0, 0); commented for debugging purposes. */
                         }
                 }
             }
@@ -527,13 +608,13 @@ void drawRoadLines(void)
 
 void deInitVars(void)
 {
-    free(lines);
     free(cars);
+    free(lines);
+    free(levels);
 }
 
-void drawCars(void)
+void drawBotCars(void)
 {
-    /* Bot cars. */
     for (int i = 0; i < carsNum; i++) {
 
         /* Body. */ 
@@ -544,7 +625,7 @@ void drawCars(void)
             glutSolidCube((GLdouble)carLength);
         glPopMatrix();
 
-        /* Cockpit. */
+        /* Interior. */
         glColor3f(0.40f, 0.00f, 0.00f); 
         glPushMatrix(); 
             glTranslatef(cars[i].x, cars[i].y+carLength/9, 0.02f);
@@ -560,52 +641,42 @@ void drawCars(void)
             glutSolidSphere(0.10d, 50, 50);
         glPopMatrix();
 
-        /* Front trap. */
         glColor3f(0.00f, 0.00f, 0.00f); 
-        glPushMatrix(); 
-            glTranslatef(cars[i].x, cars[i].y+carLength/3, 0.01f);
-            glScalef(1.00f, 0.05f, 1.00f);
-            glutSolidCube((GLdouble)carLength);
-        glPopMatrix();
-        
-        /* Back trap. */
-        glPushMatrix(); 
-            glTranslatef(cars[i].x, cars[i].y-carLength/3, 0.01f);
-            glScalef(1.00f, 0.05f, 1.00f);
-            glutSolidCube((GLdouble)carLength);
-        glPopMatrix();
 
         /* Wheels. */
         /* Top left. */
         glPushMatrix(); 
-            glTranslatef(cars[i].x-carWidth/2-carWheelSize, cars[i].y+carLength/3, 0.02f);
+            glTranslatef(cars[i].x-carWidth/2, cars[i].y+carLength/3, 0.02f);
             glScalef(0.70f, 0.80f, 1.00f);
             glutSolidSphere((GLdouble)carWheelSize, 50, 50);
         glPopMatrix();
 
         /* Top right. */
         glPushMatrix(); 
-            glTranslatef(cars[i].x+carWidth/2+carWheelSize, cars[i].y+carLength/3, 0.02f);
+            glTranslatef(cars[i].x+carWidth/2, cars[i].y+carLength/3, 0.02f);
             glScalef(0.70f, 0.80f, 1.00f);
             glutSolidSphere((GLdouble)carWheelSize, 50, 50);
         glPopMatrix();
 
         /* Bottom left. */
         glPushMatrix(); 
-            glTranslatef(cars[i].x-carWidth/2-carWheelSize, cars[i].y-carLength/3, 0.02f);
+            glTranslatef(cars[i].x-carWidth/2, cars[i].y-carLength/3, 0.02f);
             glScalef(0.70f, 0.80f, 1.00f);
             glutSolidSphere((GLdouble)carWheelSize, 50, 50);
         glPopMatrix();
 
         /* Bottom right. */
         glPushMatrix(); 
-            glTranslatef(cars[i].x+carWidth/2+carWheelSize, cars[i].y-carLength/3, 0.02f);
+            glTranslatef(cars[i].x+carWidth/2, cars[i].y-carLength/3, 0.02f);
             glScalef(0.70f, 0.80f, 1.00f);
             glutSolidSphere((GLdouble)carWheelSize, 50, 50);
         glPopMatrix();
     }
 
-    /* Player car. */
+}
+
+void drawPlayer(void)
+{
     /* Body. */ 
     glColor3f(0.00f, 0.00f, 1.00f); 
     glPushMatrix(); 
@@ -614,7 +685,7 @@ void drawCars(void)
         glutSolidCube((GLdouble)carLength);
     glPopMatrix();
 
-    /* Cockpit. */
+    /* Interior. */
     glColor3f(0.00f, 0.00f, 0.40f); 
     glPushMatrix(); 
         glTranslatef(playerCarX, playerCarY-carLength/9, 0.02f);
@@ -623,53 +694,40 @@ void drawCars(void)
     glPopMatrix();
 
     /* Head. */
-    glColor3f(0.20f, 0.00f, 0.00f); 
+    glColor3f(0.44f, 0.43f, 0.23f); 
     glPushMatrix(); 
         glTranslatef(playerCarX, playerCarY-carLength/9, 0.03f);
         glScalef(0.50f, 0.50f, 1.00f);
         glutSolidSphere(0.10d, 50, 50);
     glPopMatrix();
 
-    /* Front trap. */
-    glColor3f(0.00f, 0.00f, 0.00f); 
-    glPushMatrix(); 
-        glTranslatef(playerCarX, playerCarY+carLength/3, 0.01f);
-        glScalef(1.00f, 0.05f, 1.00f);
-        glutSolidCube((GLdouble)carLength);
-    glPopMatrix();
-    
-    /* Back trap. */
-    glPushMatrix(); 
-        glTranslatef(playerCarX, playerCarY-carLength/3, 0.01f);
-        glScalef(1.00f, 0.05f, 1.00f);
-        glutSolidCube((GLdouble)carLength);
-    glPopMatrix();
 
+    glColor3f(0.00f, 0.00f, 0.00f);
     /* Wheels. */
     /* Top left. */
     glPushMatrix(); 
-        glTranslatef(playerCarX-carWidth/2-carWheelSize, playerCarY+carLength/3, 0.02f);
+        glTranslatef(playerCarX-carWidth/2, playerCarY+carLength/3, 0.02f);
         glScalef(0.70f, 0.80f, 1.00f);
         glutSolidSphere((GLdouble)carWheelSize, 50, 50);
     glPopMatrix();
 
     /* Top right. */
     glPushMatrix(); 
-        glTranslatef(playerCarX+carWidth/2+carWheelSize, playerCarY+carLength/3, 0.02f);
+        glTranslatef(playerCarX+carWidth/2, playerCarY+carLength/3, 0.02f);
         glScalef(0.70f, 0.80f, 1.00f);
         glutSolidSphere((GLdouble)carWheelSize, 50, 50);
     glPopMatrix();
 
     /* Bottom left. */
     glPushMatrix(); 
-        glTranslatef(playerCarX-carWidth/2-carWheelSize, playerCarY-carLength/3, 0.02f);
+        glTranslatef(playerCarX-carWidth/2, playerCarY-carLength/3, 0.02f);
         glScalef(0.70f, 0.80f, 1.00f);
         glutSolidSphere((GLdouble)carWheelSize, 50, 50);
     glPopMatrix();
 
     /* Bottom right. */
     glPushMatrix(); 
-        glTranslatef(playerCarX+carWidth/2+carWheelSize, playerCarY-carLength/3, 0.02f);
+        glTranslatef(playerCarX+carWidth/2, playerCarY-carLength/3, 0.02f);
         glScalef(0.70f, 0.80f, 1.00f);
         glutSolidSphere((GLdouble)carWheelSize, 50, 50);
     glPopMatrix();
