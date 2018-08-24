@@ -55,14 +55,14 @@ GLfloat score;
 
 /* START of functions declarations. */
 
-/* Error check function. */
+/* Error check. */
 void assert(int expr, char* msg);
 /* Initialize global variables. */
 void initGlobalVars(int argc, char** argv);
 /* Deinitialize variables. */
 void deInitVars(void);
-/*Initialize OpenGl*/
-void initOpenGL(void);
+/* Initialize OpenGl*/
+void initOpenGl(void);
 /* Initialize light. */
 void initLight(void);
 
@@ -97,7 +97,7 @@ int main(int argc, char** argv)
     glutCreateWindow(argv[0]);
 
     /* Initialize OpenGL. */ 
-    initOpenGL();
+    initOpenGl();
 
     /* Callback functions. */
     glutKeyboardFunc(onKeyboard);
@@ -159,7 +159,7 @@ void initGlobalVars(int argc, char** argv)
     cars = (Car*)malloc(carsNum * sizeof(Car));
     assert(NULL != cars, "malloc()");
 
-    /* Create spawn points for bot cars. */
+    /* Spawn points for bot cars. */
     GLfloat carsSeparation = 0.00f;
     GLfloat carX = 0.00f;
     int carRandomX = 0;
@@ -206,7 +206,7 @@ void initGlobalVars(int argc, char** argv)
     lines = (Line*)malloc(linesNum * sizeof(Line));
     assert(NULL != lines, "malloc()");
 
-    /* Create spawn points for road lines. */
+    /* Spawn points for road lines. */
     GLfloat linesSeparation = 0.00f;
     for (int i = 0; i < linesNum; i++) {
         lines[i].y = 1.00f + lineLength/2 - linesSeparation;
@@ -252,7 +252,7 @@ void onKeyboard(unsigned char key, int x, int y)
             gameAnimation = 0;
             break;
 
-        /* Move one track to the left. */
+        /* Move player car one track to the left. */
         case 'a':
         case 'A':
 
@@ -262,7 +262,7 @@ void onKeyboard(unsigned char key, int x, int y)
             }
             break;
 
-        /* Move player one track to the right. */
+        /* Move player car one track to the right. */
         case 'd':
         case 'D':
 
@@ -312,7 +312,7 @@ void onDisplay(void)
         /* Draw main axis lines. */
         drawAxis();
 
-        /* Draw edges of view window. */
+        /* Draw edges of the scene. */
         drawEdges();
     #endif
 
@@ -382,6 +382,7 @@ void onTimer(int timerId)
 
         long int scoreBefore = (long int)score;
         score += speed;
+        finalScore += speed;
 
         /* Print score only if long int value is different then previous one. (to reduce console spam). */
         if (scoreBefore != (long int)score) {
@@ -394,7 +395,7 @@ void onTimer(int timerId)
             lines[i].y -= speed;
         }
 
-        /* Animate cars. */
+        /* Animate bot cars. */
         for (int i = 0; i < carsNum; i++) {
             cars[i]. y -= speed;
         }
@@ -411,7 +412,7 @@ void onTimer(int timerId)
             }
         }
 
-        /* Cars colision with bottom edge. */
+        /* Bot cars colision with bottom edge. */
         for (int i = 0; i < carsNum; i++) {
 
             if (cars[i].y + carLength/2 <= -1.00f) {
@@ -437,7 +438,7 @@ void onTimer(int timerId)
             }
         }
 
-        /* Cars collision with player car. */
+        /* Player car collision with bot cars. */
         for (int i = 0; i < carsNum; i++) {
 
             /* Possible collision. */
@@ -457,12 +458,13 @@ void onTimer(int timerId)
         }
 
         if (gameAnimation) {
+
             glutTimerFunc(GAME_TIMER_INTERVAL, onTimer, GAME_TIMER_ID);
         }
     }
 }
 
-void initOpenGL(void)
+void initOpenGl(void)
 {
     /* Define clear color. */
     glClearColor(0.40f, 0.40f, 0.40f, 0.00f);
@@ -576,7 +578,6 @@ void drawEdges()
 void drawRoad(void)
 {
     glColor3f(0.40f, 0.40f, 0.40f);
-    glNormal3f(0.00f, 0.00f, 1.00f);
     glPushMatrix();
         glTranslatef(0.00f, 0.00f, -0.10f);
         glScalef(1.00f, 1.00f, 0.00f);
@@ -590,14 +591,14 @@ void drawRoadLines(void)
 
     for (int i = 0; i < linesNum; i++) {
 
-        /* Draw left lines. */
+        /* Draw left road lines. */
         glPushMatrix();
             glTranslatef(linesLX, lines[i].y, 0.00f);
             glScalef(lineScaleX, 1.00f, 0.00f);
             glutSolidCube(lineLength);
         glPopMatrix();
 
-        /* Draw right lines. */
+        /* Draw right road lines. */
         glPushMatrix();
             glTranslatef(linesRX, lines[i].y, 0.00f);
             glScalef(lineScaleX, 1.00f, 0.00f);
