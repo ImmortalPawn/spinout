@@ -35,3 +35,4 @@ freeglut-dev3
  ## Upcoming features
  * Invulerability
  * Ammo boxes
+ * Highscore leaderboard
