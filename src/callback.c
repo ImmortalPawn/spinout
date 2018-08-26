@@ -93,22 +93,6 @@ void onDisplay(void)
     /* Initialize lighting. */
     initLighting();
 
-    #ifdef DEBUG_VISUAL
-        /* Draw main axis lines. */
-        drawAxis();
-
-        /* Draw edges of the scene. */
-        drawEdges();
-    #endif
-
-    #ifdef DEBUG_CONSOLE
-        printf("Road lines Y coordinates = ");
-        for (int i = 0; i < linesNum; i++) {
-            printf("%.2lf ", lines[i].y);
-        }
-        putchar('\n');
-    #endif
-
     /* Draw road. */
     drawRoad();
 
@@ -322,12 +306,9 @@ void onTimer(int timerId)
 
                         if (cars[i].x == playerCarX) {
 
-                            #ifdef DEBUG_CONSOLE
-                                printf("GAMEOVER: playerCarY = %.2f, colisionCarY = %.2f\n", playerCarY, cars[i].y);
-                            #endif
-                            printf("%s YOU CRASHED!\nHIGHSCORE: \nYOUR SCORE: %ld\n", playerName, (long int)finalScore);
+                            printf("%s YOU CRASHED!\nYOUR SCORE: %ld\n", playerName, (long int)finalScore);
                             gameAnimation = 0;
-                            /* onKeyboard(ESC, 0, 0); commented for debugging purposes. */
+                            onKeyboard(ESC, 0, 0);
                         }
                 }
             }
@@ -342,15 +323,15 @@ void onTimer(int timerId)
                 /* Collision detect. */
                 if (fabs((coins[i].y - playerCarY)) <= carLength/2 + coinSize/2) {
 
-                        if (coins[i].x == playerCarX) {
+                    if (coins[i].x == playerCarX) {
 
-                            /* Remove coin because it is collected. */
-                            if (coins[i].isActive) {
+                        /* Remove coin because it is collected. */
+                        if (coins[i].isActive) {
 
-                                finalScore += coinPoints;
-                                coins[i].isActive = 0;
-                            }
+                            finalScore += coinPoints;
+                            coins[i].isActive = 0;
                         }
+                    }
                 }
             }
         }

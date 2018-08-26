@@ -163,18 +163,10 @@ void initGlobalVars(int argc, char** argv)
 
     /* Spawn point for bot cars. */
     carsSpawnY = carsSeparation - 1.00f;
-    
-    #ifdef DEBUG_CONSOLE
-        printf("carsSeparation = %.2lf, carsSpawnY = %.2lf\n", carsSeparation, carsSpawnY);
-    #endif
 
     /* Player car location. */
     playerCarX = 0.00f;
     playerCarY = -0.70f;
-
-    #ifdef DEBUG_CONSOLE
-        printf("carLength = %.2f, carWidth = %.2f, carsNum = %d\n", carLength, carWidth, carsNum);
-    #endif
 
     /* Initialize road lines properties. */
     lineScaleX = 0.30f;
@@ -182,10 +174,6 @@ void initGlobalVars(int argc, char** argv)
     lineWidth = lineLength * lineScaleX;
     linesLX = -0.25f;
     linesRX = 0.25f;
-
-    #ifdef DEBUG_CONSOLE
-        printf("lineLength = %.2f, lineWidth = %.2f, linesLX = %.2f, linesRX = %.2f\n", lineLength, lineWidth, linesLX, linesRX);
-    #endif
 
     /* Allocate memory for road lines. */
     linesNum = 10;
@@ -255,10 +243,6 @@ void initGlobalVars(int argc, char** argv)
 
     /* Spawn point for coins. */
     coinsSpawnY = coinsSeparation - 1.00f;
-
-    #ifdef DEBUG_CONSOLE
-        printf("coinsSeparation = %.2lf, coinsSpawnY = %.2lf\n", coinsSeparation, coinsSpawnY);
-    #endif
 
     /* Indicator if game is animating. */
     gameAnimation = 0;

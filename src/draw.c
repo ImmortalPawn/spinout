@@ -1,69 +1,6 @@
 #include "draw.h"
 #include "global.h"
 
-void drawAxis(void)
-{
-    glPushMatrix();
-
-        glBegin(GL_LINES);
-            /* X axis. */
-            glColor3f(1.00f, 0.00f, 0.00f);
-            glVertex3f(0.00f, 0.00f, 0.00f);
-            glVertex3f(1.00f, 0.00f, 0.00f);
-
-            /* Y axis. */
-            glColor3f(0.00f, 1.00f, 0.00f);
-            glVertex3f(0.00f, 0.00f, 0.00f);
-            glVertex3f(0.00f, 1.00f, 0.00f);
-
-            /* Z axis. */
-            glColor3f(0.00f, 0.00f, 1.00f);
-            glVertex3f(0.00f, 0.00f, 0.00f);
-            glVertex3f(0.00f, 0.00f, 1.00f);
-        glEnd();
-
-    glPopMatrix();
-}
-
-void drawEdges()
-{
-    glPushMatrix();
-
-        glLineWidth(5);
-
-        glColor3f(1.00f, 0.00f, 0.00f);
-        glBegin(GL_LINES);
-            /* Left edge. */
-            glVertex3f(-0.75f, -1.00f, 0.00f);
-            glVertex3f(-0.75f, 1.00f, 0.00f);
-
-            /* Right edge. */
-            glVertex3f(0.75f, -1.00f, 0.00f);
-            glVertex3f(0.75f, 1.00f, 0.00f);
-
-            /* Bottom edge. */
-            glVertex3f(-0.75f, -1.00f, 0.00f);
-            glVertex3f(0.75f, -1.00f, 0.00f);
-
-            /* Top edge. */
-            glVertex3f(-0.75f, 1.00f, 0.00f);
-            glVertex3f(0.75f, 1.00f, 0.00f);
-
-            /* Left road line. */
-            glVertex3f(-0.25f, -1.00f, 0.00f);
-            glVertex3f(-0.25f, 1.00f, 0.00f);
-
-            /* Right road line. */
-            glVertex3f(0.25f, -1.00f, 0.00f);
-            glVertex3f(0.25f, 1.00f, 0.00f);
-
-        glEnd();
-
-        glLineWidth(1);
-
-    glPopMatrix();
-}
-
 void drawRoad(void)
 {
     glColor3f(0.40f, 0.40f, 0.40f);
@@ -154,7 +91,6 @@ void drawBotCars(void)
             glutSolidSphere((GLdouble)carWheelSize, 50, 50);
         glPopMatrix();
     }
-
 }
 
 void drawCoins(void)

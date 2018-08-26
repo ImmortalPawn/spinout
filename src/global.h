@@ -5,10 +5,6 @@
 
 #include <GL/glut.h>
 
-/* Draw debug information. */
-// #define DEBUG_VISUAL (1)
-/* Print debug information. */
-// #define DEBUG_CONSOLE (2)
 #define ENTER (13)
 #define ESC (27)
 #define GAME_TIMER_ID (1)
