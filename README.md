@@ -4,9 +4,9 @@
 Mladjan Gadzic
  
  ## Description
- Collect as many coins as possible while avoiding crash.
-<br>
-There are 10 different levels with different speeds.
+ Collect as many coins as possible while avoiding crash. 
+ <br>
+ Speed is not on your side.
  
  ## Dependencies
 freeglut-dev3
