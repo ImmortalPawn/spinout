@@ -9,9 +9,15 @@ Mladjan Gadzic
  Speed is not on your side.
  
  ## Dependencies
-freeglut-dev3
+ Built using OpenGL API with GLU/GLUT Libs.
+ <br>
+ ```
+ freeglut-dev3
+ ```
 
  ## Installation and running the program
+ Install dependencies.
+ <br>
  Download the repository and run: 
  ```
  $ make
