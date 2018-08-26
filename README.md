@@ -4,7 +4,7 @@
 Mladjan Gadzic
  
  ## Description
- Collect as many stars as possible while avoiding crash.
+ Collect as many coins as possible while avoiding crash.
 <br>
 There are 10 different levels with different speeds.
  
@@ -15,11 +15,13 @@ freeglut-dev3
  Download the repository and run: 
  ```
  $ make
- $ ./spinout.out [gameMode] [playerName]
+ $ ./spinout.out [gameDifficulty] [playerName]
  ```
- gameMode: e - Easy, m - Medium, h - hard, i - Insane. If gameMode is ommited, the game is set to easy mode.
+ gameDifficulty: e - Easy, m - Medium, h - hard, i - Insane. If gameMode is ommited, the game is set to easy mode.
 <br>
  playerName: Player's choice. If playerName is ommited, player is given name 'Unnamed'.
+ <br>
+ If there are more then 3 arguments of command line, they are ignored and default values are set. Only 2 or 3 command line arguments are accepted.
  
  ## Controls 
  | **Key** | **Description** |
