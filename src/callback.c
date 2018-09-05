@@ -40,9 +40,9 @@ void onKeyboard(unsigned char key, int x, int y)
         case 'a':
         case 'A':
 
-            if (playerCarX != -0.50f) {
+            if (playerCarX >= -0.75f + carLength/2) {
 
-                playerCarX -= 0.50f;
+                playerCarX -= playerSlideSpeed;
             }
             break;
 
@@ -50,9 +50,9 @@ void onKeyboard(unsigned char key, int x, int y)
         case 'd':
         case 'D':
 
-            if (playerCarX != 0.50f) {
+            if (playerCarX <= 0.75f - carLength/2) {
 
-                playerCarX += 0.50f;
+                playerCarX += playerSlideSpeed;
             }
             break;
     }
@@ -118,7 +118,7 @@ void onTimer(int timerId)
     if (timerId == GAME_TIMER_ID) {
 
         /* Score is based on speed and level. */
-        GLfloat levelBase = 5.00f;
+        GLfloat levelBase = 10.00f;
         for (int i = 0; i < levelsNum; i++) {
 
             GLfloat sumLess = 0.00f;
@@ -278,18 +278,22 @@ void onTimer(int timerId)
             }
         }
 
-        /* TRICK: If coin spawns on top of bot car, remove it. */
+        /* BUG: If coin spawns on top of bot car, remove it. */
         for (int i = 0; i < coinsNum; i++) {
 
             for (int j = 0; j < carsNum; j++) {
 
-                /* Collision detect. */
-                if (fabs((cars[j].y - coins[i].y)) <= carLength/2 + coinSize) {
+                /* Possible collision. */
+                if (cars[i].y >= 0.70f) {
 
-                    if (coins[i].isActive) {
+                    /* Collision detect. */
+                    if (fabs((cars[j].y - coins[i].y)) <= carLength/2 + coinSize) {
 
-                        if (cars[j].x == coins[i].x) {
-                            coins[i].isActive = 0;
+                        if (coins[i].isActive) {
+
+                            if (cars[j].x == coins[i].x) {
+                                coins[i].isActive = 0;
+                            }
                         }
                     }
                 }
@@ -305,16 +309,18 @@ void onTimer(int timerId)
                 /* Collision detect. */
                 if (fabs((cars[i].y - playerCarY)) <= carLength) {
 
-                        if (cars[i].x == playerCarX) {
+                        /* TRICK: will not work if same equation is on the left side. */
+                        if (fabs(cars[i].x - playerCarX) <= (carWidth + carWheelSize*carWheelScaleX*2)) {
 
                             printf("%s YOU CRASHED!\nYOUR SCORE: %ld\n", playerName, (long int)finalScore);
                             gameAnimation = 0;
-                            onKeyboard(ESC, 0, 0);
+                            // onKeyboard(ESC, 0, 0);
                         }
                 }
             }
         }
 
+        /* TODO: Take coin rotation in collision formula. */
         /* Player collision with coins. */
         for (int i = 0; i < coinsNum; i++) {
 
@@ -324,7 +330,7 @@ void onTimer(int timerId)
                 /* Collision detect. */
                 if (fabs((coins[i].y - playerCarY)) <= carLength/2 + coinSize/2) {
 
-                    if (coins[i].x == playerCarX) {
+                    if (fabs(coins[i].x - playerCarX) <= carWidth) {
 
                         /* Remove coin because it is collected. */
                         if (coins[i].isActive) {

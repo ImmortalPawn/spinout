@@ -128,7 +128,9 @@ void initGlobalVars(int argc, char** argv)
     carScaleX = 0.70f;
     carLength = 0.20f;
     carWidth = carLength * carScaleX;
-    carWheelSize = 0.03;
+    carWheelSize = 0.03f;
+    carWheelScaleX = 0.70f;
+    carWheelScaleY = 0.80f;
 
     /* Allocate memory for bot cars. */
     carsNum = 10;
@@ -167,6 +169,7 @@ void initGlobalVars(int argc, char** argv)
     /* Player car location. */
     playerCarX = 0.00f;
     playerCarY = -0.70f;
+    playerSlideSpeed = carWidth / ((GLfloat)GAME_TIMER_INTERVAL/4);
 
     /* Initialize road lines properties. */
     lineScaleX = 0.30f;
@@ -194,7 +197,7 @@ void initGlobalVars(int argc, char** argv)
     linesSpawnY = linesSeparation;
 
     /* Allocate memory for levels. */
-    levelsNum = 10;
+    levelsNum = 3;
     levels = (int*)calloc(levelsNum, sizeof(int));
     assert(NULL != levels, "malloc()");
 

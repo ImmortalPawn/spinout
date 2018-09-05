@@ -6,7 +6,7 @@ void drawRoad(void)
     glColor3f(0.40f, 0.40f, 0.40f);
     glPushMatrix();
         glTranslatef(0.00f, 0.00f, -0.10f);
-        glScalef(1.00f, 1.00f, 0.00f);
+        glScalef(10.00f, 10.00f, 0.00f);
         glutSolidCube(2.00d);
     glPopMatrix();
 }
@@ -73,7 +73,7 @@ void drawBotCars(void)
         /* Top right. */
         glPushMatrix(); 
             glTranslatef(cars[i].x+carWidth/2, cars[i].y+carLength/3, 0.02f);
-            glScalef(0.70f, 0.80f, 1.00f);
+            glScalef(carWheelScaleX, carWheelScaleY, 1.00f);
             glutSolidSphere((GLdouble)carWheelSize, 50, 50);
         glPopMatrix();
 
@@ -118,7 +118,6 @@ void drawCoins(void)
 
 void drawPlayer(void)
 {
-
     /* Body. */ 
     glColor3f(0.00f, 0.00f, 1.00f); 
     glPushMatrix(); 

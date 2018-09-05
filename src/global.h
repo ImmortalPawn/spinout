@@ -30,6 +30,8 @@ GLfloat carLength;
 GLfloat carWidth;
 GLfloat carScaleX;
 GLfloat carWheelSize;
+GLfloat carWheelScaleX;
+GLfloat carWheelScaleY;
 
 /* Bot cars properties. */
 int carsNum;
@@ -39,6 +41,7 @@ GLfloat carsSpawnY;
 /* Player car properties. */
 GLfloat playerCarX;
 GLfloat playerCarY;
+GLfloat playerSlideSpeed;
 
 /* Road lines properties. */
 GLfloat lineLength;
