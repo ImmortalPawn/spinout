@@ -305,16 +305,21 @@ void initLighting(void)
     GLfloat carLightsPosition[] = {playerCarX, playerCarY, carLength/2, 1.00f};
     GLfloat carLightsAmbient[] = {0.40f, 0.40f, 0.00f, 1.00f};
 
-    /* Apply player car lights properties. */
-    glLightfv(GL_LIGHT1, GL_AMBIENT, carLightsAmbient);
-    glLightfv(GL_LIGHT1, GL_DIFFUSE, lightDiffuse);
-    glLightfv(GL_LIGHT1, GL_SPECULAR, lightSpecular);
-    glLightfv(GL_LIGHT1, GL_POSITION, carLightsPosition);
+    glPushMatrix();
+    glRotatef(90.00f, 1.00f, 0.00f, 0.00f);
 
-    /* Player car lights cutoff. */
-    glLightf(GL_LIGHT1, GL_SPOT_CUTOFF, 30.00f);
-    GLfloat spotDirection[] = {0.00f, 1.00f, 0.00f};
-    glLightfv(GL_LIGHT1, GL_SPOT_DIRECTION, spotDirection);
+        /* Apply player car lights properties. */
+        glLightfv(GL_LIGHT1, GL_AMBIENT, carLightsAmbient);
+        glLightfv(GL_LIGHT1, GL_DIFFUSE, lightDiffuse);
+        glLightfv(GL_LIGHT1, GL_SPECULAR, lightSpecular);
+        glLightfv(GL_LIGHT1, GL_POSITION, carLightsPosition);
+
+        /* Player car lights cutoff. */
+        glLightf(GL_LIGHT1, GL_SPOT_CUTOFF, 30.00f);
+        GLfloat spotDirection[] = {0.00f, 1.00f, 0.00f};
+        glLightfv(GL_LIGHT1, GL_SPOT_DIRECTION, spotDirection);
+
+    glPopMatrix();
 
     /* Material properties. */
     GLfloat ambientCoeffs[] = {0.20f, 0.20f, 0.20f, 1.00f};
