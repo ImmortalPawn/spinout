@@ -169,7 +169,7 @@ void initGlobalVars(int argc, char** argv)
     /* Player car location. */
     playerCarX = 0.00f;
     playerCarY = -0.70f;
-    playerSlideSpeed = carWidth / ((GLfloat)GAME_TIMER_INTERVAL/16);
+    playerSlideSpeed = carWidth / ((GLfloat)GAME_TIMER_INTERVAL/8);
 
     /* Initialize road lines properties. */
     lineScaleX = 0.30f;
