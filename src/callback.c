@@ -314,7 +314,7 @@ void onTimer(int timerId)
 
                             printf("%s YOU CRASHED!\nYOUR SCORE: %ld\n", playerName, (long int)finalScore);
                             gameAnimation = 0;
-                            // onKeyboard(ESC, 0, 0);
+                            onKeyboard(ESC, 0, 0);
                         }
                 }
             }

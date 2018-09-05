@@ -169,7 +169,7 @@ void initGlobalVars(int argc, char** argv)
     /* Player car location. */
     playerCarX = 0.00f;
     playerCarY = -0.70f;
-    playerSlideSpeed = carWidth / ((GLfloat)GAME_TIMER_INTERVAL/4);
+    playerSlideSpeed = carWidth / ((GLfloat)GAME_TIMER_INTERVAL/16);
 
     /* Initialize road lines properties. */
     lineScaleX = 0.30f;
@@ -302,7 +302,7 @@ void initLighting(void)
     glLightfv(GL_LIGHT0, GL_POSITION, lightPosition);
 
     /* Player car lights properties. */
-    GLfloat carLightsPosition[] = {playerCarX, playerCarY-carLength*5, 0.02f, 1.00f};
+    GLfloat carLightsPosition[] = {playerCarX, playerCarY, carLength/2, 1.00f};
     GLfloat carLightsAmbient[] = {0.40f, 0.40f, 0.00f, 1.00f};
 
     /* Apply player car lights properties. */
@@ -312,7 +312,7 @@ void initLighting(void)
     glLightfv(GL_LIGHT1, GL_POSITION, carLightsPosition);
 
     /* Player car lights cutoff. */
-    glLightf(GL_LIGHT1, GL_SPOT_CUTOFF, 10.00f);
+    glLightf(GL_LIGHT1, GL_SPOT_CUTOFF, 30.00f);
     GLfloat spotDirection[] = {0.00f, 1.00f, 0.00f};
     glLightfv(GL_LIGHT1, GL_SPOT_DIRECTION, spotDirection);
 
