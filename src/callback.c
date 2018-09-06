@@ -229,19 +229,24 @@ void onTimer(int timerId)
 
             if (cars[i].y + carLength/2 <= -1.00f) {
                 
-                carRandomX = rand() % 3;
+                carRandomX = rand();
+                int side = 1;
 
-                switch (carRandomX) {
-                    case 0:
-                        carX = -0.50f;
-                        break;
-                    case 1:
-                        carX = 0.00f;
-                        break;
-                    case 2:
-                        carX = 0.50f;
-                        break;
+                if (carRandomX % 2 == 0) {
+
+                    side = -1;
                 }
+                else {
+
+                    side = 1;
+                }
+
+                while ((float)carRandomX / (float)RAND_MAX > 0.65f) {
+
+                    carRandomX = rand();
+                }
+
+                carX = (GLfloat)carRandomX / (GLfloat)RAND_MAX * side;
 
                 /* New spawn point for bot car. */
                 cars[i].x = carX;
@@ -291,7 +296,7 @@ void onTimer(int timerId)
 
                         if (coins[i].isActive) {
 
-                            if (cars[j].x == coins[i].x) {
+                            if (fabs(cars[j].x - coins[i].x) <= (carWidth + coinSize)) {
                                 coins[i].isActive = 0;
                             }
                         }
