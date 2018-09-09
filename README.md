@@ -35,8 +35,8 @@ Mladjan Gadzic
  | ENTER | start the game |
  | 'p' or 'P' | pause the game |
  | ESC | exit the game |
- | 'a' or 'A' | move player car one line to the left |
- | 'd' or 'D' | move player car one line to the left |
+ | 'a' or 'A' | move player car to the left |
+ | 'd' or 'D' | move player car to the right |
  
  ## Upcoming features
  * Invulerability
