@@ -1,4 +1,4 @@
-# RG084-spinout
+# spinout
 
  ## Author 
 Mladjan Gadzic
